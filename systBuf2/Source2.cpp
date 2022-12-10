@@ -1,3 +1,4 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <Windows.h>
 #include <strsafe.h>
@@ -9,7 +10,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine
 {
 
 	//HWND hwnd = GetConsoleWindow();
-	while (1)
+	while (TRUE)
 	{
 				LPSTR Data = ClipboardOutputText();
 				TCHAR Alert[] = L"Вы нарушили автора, скопировав следующий текст:  ";
@@ -17,13 +18,15 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine
 
 				swprintf(third, sizeof third, L"%s%s", Alert, Data);
 
-				if (*Data != 0)
+				if (Data != 0)
 				{
 					MessageBoxW(NULL, &third, L"внимание!!! Нарушение!!!", MB_OK | MB_ICONWARNING);
-					ClipboardOutputText("");
+					ClipboardOutputText("0");
+					//*Data = 0;
+					//EmptyClipboard("0");
 				}
-				Sleep(6000);
-				//CloseClipboard(0);
+			//	Sleep(6000);
+				//CloseClipboard();
 				
 
 		//Sleep(1000);
@@ -34,7 +37,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine
 }
 
 
-TCHAR* ClipboardInputText(LPWSTR buffer)
+int ClipboardInputText(LPWSTR buffer)
 {
 	DWORD len;
 	HANDLE hMen;
@@ -58,8 +61,9 @@ TCHAR* ClipboardOutputText()
 	HANDLE hClipBoard = GetClipboardData(CF_UNICODETEXT);
 	Mess = (TCHAR*)GlobalLock(hClipBoard);
 	GlobalUnlock(hClipBoard);
-	CloseClipboard();
+
 	EmptyClipboard();
+	CloseClipboard();
 	//MessageBox(NULL, Mess, L"Содержимое буфера обмена", MB_OK);
 	return Mess;
 }
